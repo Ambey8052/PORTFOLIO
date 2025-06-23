@@ -62,7 +62,7 @@ export default function HeroSection() {
           </div>
           <div className="relative animate-fade-in" style={{ animationDelay: '0.3s' }}>
             <img 
-              src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
+              src="https://res.cloudinary.com/dfhkyutbe/image/upload/v1750711350/Karan_eywhgk.jpg" 
               alt="Developer workspace with modern setup" 
               className="rounded-2xl shadow-2xl w-full h-auto transform hover:scale-105 transition-transform duration-300" 
             />
