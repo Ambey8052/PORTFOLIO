@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
+import TerminalWindow from '@/components/TerminalWindow';
 import { personalInfo } from '@/lib/constants';
 import { apiRequest } from '@/lib/queryClient';
 
@@ -96,6 +97,17 @@ export default function ContactSection() {
         >
           {/* Contact Information */}
           <div className="space-y-8">
+            <TerminalWindow title="karan@portfolio ~ ./initiate_contact.sh">
+              <div className="text-muted-foreground">
+                <span className="text-primary">&gt;</span> ./initiate_contact.sh
+              </div>
+              <div className="text-muted-foreground mb-2">[Connecting...]</div>
+              <div><span className="text-primary">Email:</span> <span className="text-foreground">{personalInfo.email}</span></div>
+              <div><span className="text-primary">Phone:</span> <span className="text-foreground">{personalInfo.phone}</span></div>
+              <div><span className="text-primary">Location:</span> <span className="text-foreground">{personalInfo.location}</span></div>
+              <div className="terminal-cursor"><span className="text-primary">Status:</span> <span className="text-green-500 dark:text-green-400">Open to opportunities</span></div>
+            </TerminalWindow>
+
             <div>
               <h3 className="text-2xl font-bold text-foreground mb-4">Get In Touch</h3>
               <p className="text-muted-foreground text-lg">

@@ -154,6 +154,83 @@
   .dark .card-hover:hover {
     box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px color-mix(in srgb, var(--primary) 25%, transparent);
   }
+
+  .glow-card {
+    position: relative;
+  }
+
+  .glow-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: radial-gradient(
+      220px circle at var(--glow-x, 50%) var(--glow-y, 50%),
+      color-mix(in srgb, var(--primary) 55%, transparent),
+      transparent 70%
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .glow-card:hover::before {
+    opacity: 1;
+  }
+
+  .spotlight {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      600px circle at var(--spot-x, 50%) var(--spot-y, 0%),
+      color-mix(in srgb, var(--primary) 12%, transparent),
+      transparent 70%
+    );
+    transition: background 0.2s ease;
+  }
+
+  .terminal-window {
+    @apply rounded-xl border border-border bg-card overflow-hidden;
+    box-shadow: 0 20px 50px -20px rgba(15, 23, 42, 0.25);
+  }
+
+  .dark .terminal-window {
+    box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.6);
+  }
+
+  .terminal-dot {
+    @apply inline-block w-2.5 h-2.5 rounded-full;
+  }
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 32s linear infinite;
+  }
+
+  .marquee-track-reverse {
+    animation-direction: reverse;
+  }
+
+  .marquee-row:hover .marquee-track {
+    animation-play-state: paused;
+  }
+
+  .terminal-cursor::after {
+    content: '';
+    display: inline-block;
+    width: 0.5em;
+    height: 1em;
+    margin-left: 2px;
+    background: var(--primary);
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+  }
 }
 
 @keyframes float {
@@ -186,6 +263,25 @@
   0% { transform: translateX(-100%); }
   50% { transform: translateX(60%); }
   100% { transform: translateX(220%); }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes typeReveal {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+.animate-type {
+  animation: typeReveal 0.6s steps(30, end) forwards;
 }
 
 .animate-float {

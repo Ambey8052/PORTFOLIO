@@ -1,11 +1,27 @@
-import { ExternalLink, Github, ChevronDown, Sparkles } from 'lucide-react';
+import { ExternalLink, Github, ChevronDown, Sparkles, Target } from 'lucide-react';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
-import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { projects } from '@/lib/constants';
 
+const container = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.1 } },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.2, 0.8, 0.2, 1] as const } },
+};
+
+function handleGlow(e: React.MouseEvent<HTMLDivElement>) {
+  const el = e.currentTarget;
+  const rect = el.getBoundingClientRect();
+  el.style.setProperty('--glow-x', `${e.clientX - rect.left}px`);
+  el.style.setProperty('--glow-y', `${e.clientY - rect.top}px`);
+}
+
 export default function ProjectsSection() {
-  const { ref, isVisible } = useScrollAnimation();
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   return (
@@ -21,20 +37,24 @@ export default function ProjectsSection() {
           </p>
         </div>
 
-        <div
-          ref={ref}
-          className={`grid md:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-700 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}
+        <motion.div
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+          variants={container}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.1 }}
         >
           {projects.map((project) => {
             const isExpanded = expandedId === project.id;
-            const hasLinks = Boolean(project.liveUrl || project.repoUrl);
+            const highlight = project.aiIntegration ?? project.highlight;
+            const highlightLabel = project.aiIntegration ? 'AI Integration' : 'Key Highlight';
 
             return (
-              <div
+              <motion.div
                 key={project.id}
-                className="flex flex-col bg-card rounded-2xl border border-border card-hover overflow-hidden"
+                variants={item}
+                onMouseMove={handleGlow}
+                className="glow-card relative flex flex-col bg-card rounded-2xl border border-border card-hover overflow-hidden"
               >
                 <div className="p-6 pb-0 flex items-start justify-between">
                   <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -46,7 +66,11 @@ export default function ProjectsSection() {
                 </div>
 
                 <div className="p-6 flex-1 flex flex-col">
-                  <h3 className="text-xl font-bold text-foreground mb-2">{project.title}</h3>
+                  <h3 className="text-xl font-bold text-foreground mb-1">{project.title}</h3>
+                  <p className="text-xs font-mono text-primary mb-3 flex items-center gap-1.5">
+                    <Target className="w-3 h-3 flex-shrink-0" />
+                    {project.problem}
+                  </p>
                   <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
                     {project.description}
                   </p>
@@ -58,6 +82,13 @@ export default function ProjectsSection() {
                       </Badge>
                     ))}
                   </div>
+
+                  {highlight && (
+                    <div className="mb-4 p-3 rounded-lg bg-primary/5 border border-primary/15">
+                      <div className="text-[10px] font-mono uppercase tracking-wider text-primary mb-1">{highlightLabel}</div>
+                      <p className="text-xs text-muted-foreground leading-relaxed">{highlight}</p>
+                    </div>
+                  )}
 
                   <button
                     type="button"
@@ -92,8 +123,12 @@ export default function ProjectsSection() {
                         <ExternalLink className="w-4 h-4" />
                         Live Demo
                       </a>
-                    ) : null}
-                    {project.repoUrl ? (
+                    ) : (
+                      <span className="flex-1 inline-flex items-center justify-center rounded-lg border border-dashed border-border text-muted-foreground text-xs font-medium py-2.5">
+                        Link coming soon
+                      </span>
+                    )}
+                    {project.repoUrl && (
                       <a
                         href={project.repoUrl}
                         target="_blank"
@@ -103,18 +138,13 @@ export default function ProjectsSection() {
                         <Github className="w-4 h-4" />
                         Code
                       </a>
-                    ) : null}
-                    {!hasLinks && (
-                      <span className="flex-1 inline-flex items-center justify-center rounded-lg border border-dashed border-border text-muted-foreground text-xs font-medium py-2.5">
-                        Links coming soon
-                      </span>
                     )}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

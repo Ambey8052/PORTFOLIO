@@ -7,6 +7,7 @@ const navLinks = [
   { href: "#home", label: "Home" },
   { href: "#about", label: "About" },
   { href: "#skills", label: "Skills" },
+  { href: "#process", label: "Process" },
   { href: "#experience", label: "Experience" },
   { href: "#projects", label: "Projects" },
   { href: "#education", label: "Education" },
@@ -82,7 +83,7 @@ export default function Navigation() {
               <span className="hidden sm:inline">{personalInfo.name}</span>
             </button>
 
-            <div className="hidden lg:flex items-center space-x-7">
+            <div className="hidden xl:flex items-center space-x-6">
               {navLinks.map((link) => (
                 <button
                   key={link.href}
@@ -96,7 +97,7 @@ export default function Navigation() {
               ))}
             </div>
 
-            <div className="hidden lg:flex items-center gap-3">
+            <div className="hidden xl:flex items-center gap-3">
               <ThemeToggle />
               <a
                 href={personalInfo.resumeUrl}
@@ -109,7 +110,7 @@ export default function Navigation() {
               </a>
             </div>
 
-            <div className="flex items-center gap-2 lg:hidden">
+            <div className="flex items-center gap-2 xl:hidden">
               <ThemeToggle />
               <button
                 className="text-foreground p-2 cursor-pointer"
@@ -126,7 +127,7 @@ export default function Navigation() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
+        <div className="fixed inset-0 z-50 xl:hidden">
           <div className="fixed inset-0 bg-black/50" onClick={() => setIsMobileMenuOpen(false)} />
           <div className="fixed top-0 right-0 h-full w-72 bg-card shadow-xl">
             <div className="flex items-center justify-between p-5 border-b border-border">

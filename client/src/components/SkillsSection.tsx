@@ -1,5 +1,5 @@
+import { motion } from 'framer-motion';
 import { Braces, Layout, Server, Database, Wrench } from 'lucide-react';
-import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { skills } from '@/lib/constants';
 
 const categoryIcons = {
@@ -10,8 +10,24 @@ const categoryIcons = {
   tools: Wrench,
 } as const;
 
+const container = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.1 } },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.2, 0.8, 0.2, 1] as const } },
+};
+
+function handleGlow(e: React.MouseEvent<HTMLDivElement>) {
+  const el = e.currentTarget;
+  const rect = el.getBoundingClientRect();
+  el.style.setProperty('--glow-x', `${e.clientX - rect.left}px`);
+  el.style.setProperty('--glow-y', `${e.clientY - rect.top}px`);
+}
+
 export default function SkillsSection() {
-  const { ref, isVisible } = useScrollAnimation();
   const categories = Object.entries(skills) as [keyof typeof skills, typeof skills[keyof typeof skills]][];
 
   return (
@@ -27,16 +43,22 @@ export default function SkillsSection() {
           </p>
         </div>
 
-        <div
-          ref={ref}
-          className={`grid md:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-700 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}
+        <motion.div
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+          variants={container}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
         >
           {categories.map(([key, category]) => {
             const Icon = categoryIcons[key];
             return (
-              <div key={key} className="bg-card p-6 rounded-2xl border border-border card-hover">
+              <motion.div
+                key={key}
+                variants={item}
+                onMouseMove={handleGlow}
+                className="glow-card relative bg-card p-6 rounded-2xl border border-border card-hover"
+              >
                 <div className="flex items-center mb-5">
                   <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mr-3">
                     <Icon className="text-primary w-5 h-5" />
@@ -44,19 +66,19 @@ export default function SkillsSection() {
                   <h3 className="text-lg font-semibold text-foreground">{category.label}</h3>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {category.items.map((item) => (
+                  {category.items.map((skillItem) => (
                     <span
-                      key={item}
+                      key={skillItem}
                       className="text-sm font-medium px-3 py-1.5 rounded-lg bg-muted text-foreground/80 border border-border/60 font-mono"
                     >
-                      {item}
+                      {skillItem}
                     </span>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

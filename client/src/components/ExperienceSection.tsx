@@ -1,6 +1,21 @@
-import { Briefcase, MapPin } from 'lucide-react';
+import {
+  Briefcase, MapPin, ChevronRight,
+  FileSpreadsheet, Workflow, Layers, Container,
+  Shield, GitBranch, Database, Image,
+} from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { experience } from '@/lib/constants';
+
+const flowIcons = {
+  fileSpreadsheet: FileSpreadsheet,
+  workflow: Workflow,
+  layers: Layers,
+  container: Container,
+  shield: Shield,
+  gitBranch: GitBranch,
+  database: Database,
+  image: Image,
+} as const;
 
 export default function ExperienceSection() {
   const { ref, isVisible } = useScrollAnimation();
@@ -49,7 +64,7 @@ export default function ExperienceSection() {
                       </span>
                       <span className="font-mono text-xs">{job.duration}</span>
                     </div>
-                    <ul className="space-y-2 mb-4">
+                    <ul className="space-y-2 mb-5">
                       {job.points.map((point, i) => (
                         <li key={i} className="text-sm text-muted-foreground leading-relaxed flex gap-2">
                           <span className="text-primary mt-1.5 flex-shrink-0">&bull;</span>
@@ -57,6 +72,30 @@ export default function ExperienceSection() {
                         </li>
                       ))}
                     </ul>
+
+                    {/* Pipeline visualization */}
+                    <div className="mb-5 p-4 rounded-xl bg-muted/40 border border-border/60 overflow-x-auto">
+                      <div className="flex items-center gap-1.5 min-w-max">
+                        {job.flow.map((step, i) => {
+                          const StepIcon = flowIcons[step.icon as keyof typeof flowIcons];
+                          return (
+                            <div key={step.label} className="flex items-center gap-1.5">
+                              <div className="flex flex-col items-center text-center w-28">
+                                <div className="w-9 h-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mb-1.5">
+                                  <StepIcon className="w-4 h-4 text-primary" />
+                                </div>
+                                <span className="text-xs font-medium text-foreground leading-tight">{step.label}</span>
+                                <span className="text-[10px] font-mono text-muted-foreground leading-tight">{step.sub}</span>
+                              </div>
+                              {i < job.flow.length - 1 && (
+                                <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
                     <div className="flex flex-wrap gap-2">
                       {job.tags.map((tag) => (
                         <span key={tag} className="text-xs font-mono px-2.5 py-1 rounded-md bg-muted text-muted-foreground border border-border/60">

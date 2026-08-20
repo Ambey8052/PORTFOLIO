@@ -1,8 +1,20 @@
+import { useRef } from 'react';
 import { Download, Mail, Github, Linkedin, ArrowDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { personalInfo, stats } from '@/lib/constants';
+import TerminalWindow from '@/components/TerminalWindow';
+import { personalInfo, stats, terminalStatus } from '@/lib/constants';
 
 export default function HeroSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    el.style.setProperty('--spot-x', `${e.clientX - rect.left}px`);
+    el.style.setProperty('--spot-y', `${e.clientY - rect.top}px`);
+  };
+
   const handleContactClick = () => {
     const element = document.querySelector('#contact');
     if (element) {
@@ -16,8 +28,14 @@ export default function HeroSection() {
   };
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden hero-gradient pt-24 pb-16">
+    <section
+      id="home"
+      ref={sectionRef}
+      onMouseMove={handleMouseMove}
+      className="relative min-h-screen flex items-center justify-center overflow-hidden hero-gradient pt-24 pb-16"
+    >
       <div className="absolute inset-0 grid-pattern" aria-hidden="true" />
+      <div className="spotlight hidden lg:block" aria-hidden="true" />
       <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
         <div className="absolute -top-16 -right-16 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float" />
         <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-accent/10 rounded-full blur-3xl animate-float"
@@ -43,10 +61,10 @@ export default function HeroSection() {
             <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto lg:mx-0">
               B.Tech IT student building AI-powered, full-stack web applications with the{' '}
               <span className="font-mono text-primary">MERN</span> stack — from research tools and
-              government-scheme platforms to conversational resume builders.
+              government-scheme platforms to real-time chat apps and conversational resume builders.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-10">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
               <Button asChild className="text-white px-8 py-6 rounded-xl font-semibold hover:scale-105 transform transition-all duration-200 shadow-lg cursor-pointer" style={{ background: 'var(--gradient-primary)' }}>
                 <a href={personalInfo.resumeUrl} download>
                   <Download className="w-5 h-5 mr-2" />
@@ -63,23 +81,42 @@ export default function HeroSection() {
               </Button>
             </div>
 
-            <div className="flex items-center justify-center lg:justify-start gap-3 mb-10">
-              <a href={personalInfo.githubUrl} target="_blank" rel="noopener noreferrer"
-                 aria-label="GitHub profile"
-                 className="w-11 h-11 flex items-center justify-center rounded-full border border-border text-foreground hover:border-primary hover:text-primary transition-colors cursor-pointer">
-                <Github size={18} />
-              </a>
-              <a href={personalInfo.linkedinUrl} target="_blank" rel="noopener noreferrer"
-                 aria-label="LinkedIn profile"
-                 className="w-11 h-11 flex items-center justify-center rounded-full border border-border text-foreground hover:border-primary hover:text-primary transition-colors cursor-pointer">
-                <Linkedin size={18} />
-              </a>
-              <a href={`mailto:${personalInfo.email}`}
-                 aria-label="Send email"
-                 className="w-11 h-11 flex items-center justify-center rounded-full border border-border text-foreground hover:border-primary hover:text-primary transition-colors cursor-pointer">
-                <Mail size={18} />
-              </a>
-            </div>
+            <TerminalWindow
+              title="karan@portfolio ~ status.json"
+              className="mb-8 max-w-md mx-auto lg:mx-0 text-left"
+              footer={
+                <>
+                  <span className="text-xs font-mono text-muted-foreground">Connect</span>
+                  <div className="flex items-center gap-2">
+                    <a href={personalInfo.githubUrl} target="_blank" rel="noopener noreferrer" aria-label="GitHub profile"
+                       className="w-8 h-8 flex items-center justify-center rounded-md text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer">
+                      <Github size={15} />
+                    </a>
+                    <a href={personalInfo.linkedinUrl} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile"
+                       className="w-8 h-8 flex items-center justify-center rounded-md text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer">
+                      <Linkedin size={15} />
+                    </a>
+                    <a href={`mailto:${personalInfo.email}`} aria-label="Send email"
+                       className="w-8 h-8 flex items-center justify-center rounded-md text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer">
+                      <Mail size={15} />
+                    </a>
+                  </div>
+                </>
+              }
+            >
+              <span className="text-muted-foreground">[</span>
+              <div className="pl-4">
+                {terminalStatus.map((line) => (
+                  <div key={line.key}>
+                    <span className="text-primary">"{line.key}"</span>
+                    <span className="text-muted-foreground">: </span>
+                    <span className="text-foreground">"{line.value}"</span>
+                    <span className="text-muted-foreground">,</span>
+                  </div>
+                ))}
+              </div>
+              <span className="text-muted-foreground terminal-cursor">]</span>
+            </TerminalWindow>
 
             <div className="grid grid-cols-4 gap-4 max-w-md mx-auto lg:mx-0">
               {stats.map((stat) => (
