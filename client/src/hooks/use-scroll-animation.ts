@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 
-export function useScrollAnimation(threshold = 0.1) {
+export function useScrollAnimation<T extends HTMLElement = HTMLDivElement>(threshold = 0.1) {
   const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<T>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -30,14 +30,4 @@ export function useScrollAnimation(threshold = 0.1) {
   }, [threshold]);
 
   return { ref, isVisible };
-}
-
-export function useSkillAnimation() {
-  const [animatedSkills, setAnimatedSkills] = useState<Set<string>>(new Set());
-  
-  const animateSkill = (skillName: string) => {
-    setAnimatedSkills(prev => new Set([...prev, skillName]));
-  };
-
-  return { animatedSkills, animateSkill };
 }

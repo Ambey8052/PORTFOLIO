@@ -9,6 +9,18 @@ import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { personalInfo } from '@/lib/constants';
 import { apiRequest } from '@/lib/queryClient';
 
+const contactItems = [
+  { icon: Mail, label: "Email", value: (p: typeof personalInfo) => p.email, href: (p: typeof personalInfo) => `mailto:${p.email}` },
+  { icon: Phone, label: "Phone", value: (p: typeof personalInfo) => p.phone, href: (p: typeof personalInfo) => `tel:${p.phone.replace(/[^+\d]/g, '')}` },
+  { icon: MapPin, label: "Location", value: (p: typeof personalInfo) => p.location, href: undefined },
+];
+
+const socialLinks = [
+  { icon: Linkedin, url: (p: typeof personalInfo) => p.linkedinUrl, label: "LinkedIn" },
+  { icon: Github, url: (p: typeof personalInfo) => p.githubUrl, label: "GitHub" },
+  { icon: Instagram, url: (p: typeof personalInfo) => p.instagramUrl, label: "Instagram" },
+];
+
 export default function ContactSection() {
   const { ref, isVisible } = useScrollAnimation();
   const { toast } = useToast();
@@ -64,97 +76,78 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="contact" className="py-24 bg-muted/40">
+      <div className="container-px">
         <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Let's Work Together</h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <span className="section-eyebrow mb-4">Contact</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground mb-4 tracking-tight">
+            Let's Work Together
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Ready to bring your ideas to life? Let's discuss how we can create something amazing together.
           </p>
         </div>
-        
-        <div 
+
+        <div
           ref={ref}
-          className={`grid lg:grid-cols-2 gap-12 transition-all duration-800 ${
+          className={`grid lg:grid-cols-2 gap-12 transition-all duration-700 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
           {/* Contact Information */}
           <div className="space-y-8">
             <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Get In Touch</h3>
-              <p className="text-gray-600 text-lg mb-8">
-                I'm always open to discussing new opportunities, interesting projects, 
+              <h3 className="text-2xl font-bold text-foreground mb-4">Get In Touch</h3>
+              <p className="text-muted-foreground text-lg">
+                I'm always open to discussing new opportunities, interesting projects,
                 or just having a conversation about technology and development.
               </p>
             </div>
-            
-            <div className="space-y-6">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Mail className="text-primary text-xl" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900">Email</h4>
-                  <p className="text-gray-600">{personalInfo.email}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center">
-                  <Phone className="text-secondary text-xl" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900">Phone</h4>
-                  <p className="text-gray-600">{personalInfo.phone}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <MapPin className="text-green-600 text-xl" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900">Location</h4>
-                  <p className="text-gray-600">{personalInfo.location}</p>
-                </div>
-              </div>
+
+            <div className="space-y-4">
+              {contactItems.map((item) => {
+                const content = (
+                  <div className="flex items-center gap-4 bg-card border border-border rounded-xl p-4 card-hover">
+                    <div className="w-11 h-11 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <item.icon className="text-primary w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-foreground text-sm">{item.label}</h4>
+                      <p className="text-muted-foreground text-sm">{item.value(personalInfo)}</p>
+                    </div>
+                  </div>
+                );
+                return item.href ? (
+                  <a key={item.label} href={item.href(personalInfo)} className="block cursor-pointer">
+                    {content}
+                  </a>
+                ) : (
+                  <div key={item.label}>{content}</div>
+                );
+              })}
             </div>
-            
-            {/* Social Links */}
-            <div className="pt-8">
-              <h4 className="font-semibold text-gray-900 mb-4">Connect With Me</h4>
-              <div className="flex space-x-4">
-                <a 
-                  href={personalInfo.linkedinUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-12 h-12 bg-blue-600 text-white rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
-                >
-                  <Linkedin size={20} />
-                </a>
-                <a 
-                  href={personalInfo.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-12 h-12 bg-gray-900 text-white rounded-lg flex items-center justify-center hover:bg-gray-800 transition-colors"
-                >
-                  <Github size={20} />
-                </a>
-                <a 
-                  href={personalInfo.instagramUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-12 h-12 bg-red-600 text-white rounded-lg flex items-center justify-center hover:bg-red-700 transition-colors"
-                >
-                  <Instagram size={20} />
-                </a>
+
+            <div className="pt-4">
+              <h4 className="font-semibold text-foreground mb-4">Connect With Me</h4>
+              <div className="flex space-x-3">
+                {socialLinks.map((social) => (
+                  <a
+                    key={social.label}
+                    href={social.url(personalInfo)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={social.label}
+                    className="w-11 h-11 bg-card border border-border text-foreground rounded-lg flex items-center justify-center hover:border-primary hover:text-primary transition-colors cursor-pointer"
+                  >
+                    <social.icon size={18} />
+                  </a>
+                ))}
               </div>
             </div>
           </div>
-          
+
           {/* Contact Form */}
-          <div className="bg-gray-50 p-8 rounded-2xl">
+          <div className="bg-card border border-border p-8 rounded-2xl">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
@@ -184,7 +177,7 @@ export default function ContactSection() {
                   />
                 </div>
               </div>
-              
+
               <div>
                 <Label htmlFor="email">Email Address</Label>
                 <Input
@@ -198,7 +191,7 @@ export default function ContactSection() {
                   className="mt-2"
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="subject">Subject</Label>
                 <Input
@@ -212,7 +205,7 @@ export default function ContactSection() {
                   className="mt-2"
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="message">Message</Label>
                 <Textarea
@@ -226,11 +219,12 @@ export default function ContactSection() {
                   className="mt-2 resize-none"
                 />
               </div>
-              
-              <Button 
+
+              <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-primary text-white hover:bg-primary/90 transform hover:scale-105 transition-all duration-200 shadow-lg py-4"
+                className="w-full text-white hover:scale-[1.02] transform transition-all duration-200 shadow-lg py-6 cursor-pointer"
+                style={{ background: 'var(--gradient-primary)' }}
               >
                 <Send className="w-5 h-5 mr-2" />
                 {isSubmitting ? 'Sending...' : 'Send Message'}
