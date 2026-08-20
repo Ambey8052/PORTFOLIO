@@ -284,6 +284,17 @@
   animation: typeReveal 0.6s steps(30, end) forwards;
 }
 
+@keyframes reticleBreathe {
+  0%, 100% { opacity: 0.5; transform: scale(0.82); }
+  50% { opacity: 1; transform: scale(1.18); }
+}
+
+.animate-reticle-breathe {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: reticleBreathe 1.8s ease-in-out infinite;
+}
+
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
